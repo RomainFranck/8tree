@@ -12,6 +12,7 @@ public:
 	{
 		_size = size + 1;
 		_value = t;
+		_parent = NULL;
 
 		for (int i = 0 ; i < 8 ; i++)
 			_children[i] = NULL;
@@ -32,9 +33,9 @@ public:
 		if (_value != NULL)
 			delete _value;
 
-		for (EigthTree* vt : _children)
+		for (int i = 0 ; i < 8 ; i++)
 		{
-			delete vt;
+			delete _children[i];
 		}
 	};
 
@@ -77,27 +78,28 @@ public:
 			_value = value;
 		else
 		{
-			if (_children[index] == NULL)
-				_children[index] = new EigthTree<T>(this, _size - 1, NULL);
-
 			if (_value == NULL || *_value != *value)
+			{			
+				if (_children[index] == NULL)
+					_children[index] = new EigthTree<T>(this, _size - 1, NULL);
 				return _children[index]->setValue(x, y, z, value);
-
-			if (_value != NULL) //this == _children[index]
-			{
-				delete _children[index];
-				return;
 			}
 
 			if (this->areChildrenSame(value))
 			{
+				delete _value;
 				_value = new T(*value);
 			
+				std::cout << "is this it ?" << std::endl;
+
 				for (EigthTree* vt : _children)
 					delete vt;
 			}
-			else
+			else if (_parent != NULL)
+			{
+				delete _value;
 				_value = NULL;
+			}
 		}
 	};
 

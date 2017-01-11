@@ -1,12 +1,12 @@
 #include <iostream>
 #include <memory>
 
-#include <EigthTree.hpp>
+#include <EightTree.hpp>
 #include <Voxel.hpp>
 
 int main (int argc, char **argv)
 {
-	std::unique_ptr<EigthTree<Voxel>> vTree = std::make_unique<EigthTree<Voxel>>(4, std::make_unique<Voxel>(0));
+	std::unique_ptr<EightTree<Voxel>> vTree = std::make_unique<EightTree<Voxel>>(4, std::make_unique<Voxel>(0));
 
 	for (int i = 0 ; i < ((1 << 4) - 1) ; i++)
 	{

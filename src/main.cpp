@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include <VoxelTree.hpp>
+#include <EigthTree.hpp>
 #include <Voxel.hpp>
 
 void init(void);
@@ -15,7 +15,7 @@ int main (int argc, char **argv)
 {
 	Voxel v(0xff44aa);
 
-	VoxelTree<Voxel> vTree(32, new Voxel(0));
+	EigthTree<Voxel> vTree(32, new Voxel(0));
 
 	vTree.setValue(0b0100000000, 0b0111011100, 0b0001110001, new Voxel(12));
 

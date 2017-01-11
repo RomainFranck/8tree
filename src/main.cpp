@@ -1,12 +1,12 @@
 #include <iostream>
+#include <memory>
 
 #include <EigthTree.hpp>
 #include <Voxel.hpp>
 
 int main (int argc, char **argv)
 {
-	Voxel* v0 = new Voxel(0);
-	EigthTree<Voxel>* vTree = new EigthTree<Voxel>(4, v0);
+	std::unique_ptr<EigthTree<Voxel>> vTree = std::make_unique<EigthTree<Voxel>>(4, std::make_unique<Voxel>(0));
 
 	for (int i = 0 ; i < ((1 << 4) - 1) ; i++)
 	{
@@ -14,10 +14,8 @@ int main (int argc, char **argv)
 		{
 			for (int k = 0 ; k < ((1 << 4) - 1) ; k++)
 			{
-				vTree->setValue(i, j, k, new Voxel(i & 1 ? 1 : 2));
+				vTree->setValue(i, j, k, std::make_unique<Voxel>(i & 1 ? 1 : 2));
 			}
 		}
 	}
-
-	delete vTree;
 }

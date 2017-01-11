@@ -9,5 +9,6 @@ int main (int argc, char **argv)
 
 	vTree.setValue(0b010, 0b100, 0b001, new Voxel(12));
 
-	std::cout << vTree.getValue(0b010, 0b101, 0b001).color << std::endl;
+	std::cout << vTree.getValue(0b011, 0b101, 0b000).color << std::endl;
+	std::cout << vTree.getValue(0b010, 0b100, 0b001).color << std::endl;
 }

@@ -10,9 +10,7 @@ class EigthTree
 public:
 	EigthTree(unsigned int size, T* t)
 	{
-		std::cout << "new tree of size " << size << std::endl;
-
-		_size = size;
+		_size = size + 1;
 		_value = t;
 
 		for (int i = 0 ; i < 8 ; i++)
@@ -21,8 +19,6 @@ public:
 
 	EigthTree(EigthTree* vt, unsigned int size, T* t)
 	{
-		std::cout << "new tree of size " << size << std::endl;
-
 		_parent = vt;
 		_value = t;
 		_size = size;
@@ -59,16 +55,13 @@ public:
 
 	T& 			getValue()
 	{
-		std::cout << "size = " << _size << std::endl; 
 		return _value != NULL ? *_value : _parent->getValue(); 
 	};
 
 	T& 			getValue(int x, int y, int z)
 	{
-		int bs = _size - 1;
+		int bs = _size - 2;
 		int index = (((x >> bs) & 1) << 2) | (((y >> bs) & 1) << 1) | ((z >> bs) & 1);
-
-		std::cout << "get coordinates = " << x << " " << y << " " << z << " index = " << index << std::endl;
 
 		if (_children[index] != NULL)
 			return _children[index]->getValue(x, y, z);
@@ -77,10 +70,8 @@ public:
 
 	void 		setValue(int x, int y, int z, T* value)
 	{
-		int bs = _size - 1;
+		int bs = _size - 2;
 		int index = (((x >> bs) & 1) << 2) | (((y >> bs) & 1) << 1) | ((z >> bs) & 1);
-
-		std::cout << "set coordinates = " << x << " " << y << " " << z << " index = " << index << std::endl;
 
 		if (_size == 1)
 			_value = value;
@@ -102,8 +93,6 @@ public:
 			{
 				_value = new T(*value);
 			
-				std::cout << "destroying all children" << std::endl;
-
 				for (EigthTree* vt : _children)
 					delete vt;
 			}

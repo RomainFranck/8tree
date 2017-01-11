@@ -43,14 +43,20 @@ public:
 	};
 
 	template<unsigned int i>
-	EigthTree*	getChild() 
-		{ return _children[i]; };
+	std::unique_ptr<EigthTree>	getChild() 
+	{ 
+		return _children[i]; 
+	}
 
-	EigthTree*	getChild(unsigned int i)
-		{ return _children[i]; };
+	std::unique_ptr<EigthTree>	getChild(unsigned int i)
+	{
+		return _children[i]; 
+	}
 
-	EigthTree*	getParent()
-		{ return _parent; };
+	std::unique_ptr<EigthTree>	getParent()
+	{
+		return _parent; 
+	}
 
 	T& 			getValue()
 	{

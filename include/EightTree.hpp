@@ -8,33 +8,17 @@ template<class T>
 class EightTree
 {
 public:
-	EightTree(unsigned int size, std::unique_ptr<T> t)
+	EightTree(unsigned int size, T value)
 	{
-		_size = size + 1;
-		_value = std::move(t);
-		_parent = nullptr;
-
-		for (int i = 0 ; i < 8 ; i++)
-			_children[i].reset();
-	};
-
-	EightTree(EightTree* vt, unsigned int size, std::unique_ptr<T> t)
-	{
-		_parent = std::unique_ptr<EightTree>(vt);
-		_value = std::move(t);
 		_size = size;
-
-		for (int i = 0 ; i < 8 ; i++)
-			_children[i].reset();
-
-	}
+		_value = value;
+	};
 
 	~EightTree()
 	{
-		_value.reset();
-
 		for (int i = 0 ; i < 8 ; i++)
-			_children[i].reset();
+			if (_children[i] != nullptr)
+				_children[i].reset();
 	};
 
 	bool	operator==(EightTree* a)
@@ -42,30 +26,19 @@ public:
 		return (a == nullptr ? this == nullptr : a->getValue() == this->getValue());
 	};
 
-	template<unsigned int i>
-	std::unique_ptr<EightTree>	getChild() 
-	{ 
-		return _children[i]; 
+	std::weak_ptr<EightTree>	getChild(unsigned int i)
+	{
+		return std::weak_ptr<EightTree>(_children[i]); 
 	}
 
-	std::unique_ptr<EightTree>	getChild(unsigned int i)
+	T&							getValue()
 	{
-		return _children[i]; 
+		return _value;
 	}
 
-	std::unique_ptr<EightTree>	getParent()
+	T&							getValue(int x, int y, int z)
 	{
-		return _parent; 
-	}
-
-	T& 			getValue()
-	{
-		return _value != nullptr ? *_value : _parent->getValue(); 
-	};
-
-	T& 			getValue(int x, int y, int z)
-	{
-		int bs = _size - 2;
+		int bs = _size - 1;
 		int index = (((x >> bs) & 1) << 2) | (((y >> bs) & 1) << 1) | ((z >> bs) & 1);
 
 		if (_children[index] != nullptr)
@@ -73,53 +46,62 @@ public:
 		return this->getValue();
 	};
 
-	void 		setValue(int x, int y, int z, std::unique_ptr<T> value)
+	void 		setValue(int x, int y, int z, T value)
 	{
-		int bs = _size - 2;
+		int bs = _size - 1;
 		int index = (((x >> bs) & 1) << 2) | (((y >> bs) & 1) << 1) | ((z >> bs) & 1);
 
-		if (_size == 1)
-			_value = std::move(value);
+		if (_size <= 0)
+			_value = value;
 		else
 		{
-			if (_value == nullptr || *_value != *value)
-			{			
+			if (_value != value)
+			{	
 				if (_children[index] == nullptr)
-					_children[index] = std::make_unique<EightTree<T>>(this, _size - 1, nullptr);
-				return _children[index]->setValue(x, y, z, std::move(value));
-			}
+					_children[index] = std::make_shared<EightTree<T>>(_size - 1, _value);
 
-			if (this->areChildrenSame(value))
-			{
-				_value.reset();
-				_value = std::move(value);
-			
-				std::cout << "is this it ?" << std::endl;
+				_children[index]->setValue(x, y, z, value);
 
-				for (int i = 0 ; i < 8 ; i++)
-					_children[i].reset();
+				if (this->areChildrenSame(value))
+				{
+					_value = value;
+
+					for (int i = 0 ; i < 8 ; i++)
+						if (_children[i] != nullptr)
+							_children[i].reset();
+				}//*/
 			}
-/*			else if (_parent != nullptr)
-			{
-				delete _value;
-				_value = nullptr;
-			}*/
 		}
+	};
+
+	void		dump(int padding)
+	{
+		for(int i = 0 ; i < padding ; i++)
+		{
+			std::cout << "	";
+		}
+
+		std::cout << _value << std::endl;
+
+		for (int i = 0 ; i < 8 ; i++)
+			if (_children[i] != nullptr)
+				_children[i]->dump(padding + 1);
 	};
 
 private:
 
 	unsigned int					_size;
-	std::unique_ptr<EightTree> 		_parent;
-	std::unique_ptr<EightTree>		_children[8];
-	std::unique_ptr<T>				_value;
+	std::shared_ptr<EightTree>		_children[8];
+	T								_value;
 
-	bool		areChildrenSame(std::unique_ptr<T>& value)
+	bool		areChildrenSame(T value)
 	{
 		for (int i = 0 ; i < 8 ; i++)
 		{
-			if (_children[i] == nullptr || _children[i]->getValue() != *value)
+			if (_children[i] == nullptr || _children[i]->getValue() != value)
+			{
 				return false;
+			}
 		}
 
 		return true;

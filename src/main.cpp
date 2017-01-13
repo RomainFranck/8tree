@@ -6,16 +6,20 @@
 
 int main (int argc, char **argv)
 {
-	std::unique_ptr<EightTree<Voxel>> vTree = std::make_unique<EightTree<Voxel>>(4, std::make_unique<Voxel>(0));
+	int size = argc == 2 ? atoi(argv[1]) : 4;
 
-	for (int i = 0 ; i < ((1 << 4) - 1) ; i++)
+	std::shared_ptr<EightTree<Voxel>> vTree = std::make_shared<EightTree<Voxel>>(size, Voxel(0));
+
+	for (int i = 0 ; i < ((1 << (size + 1)) - 1) ; i++)
 	{
-		for (int j = 0 ; j < ((1 << 4) - 1) ; j++)
+		for (int j = 0 ; j < ((1 << (size + 1)) - 1) ; j++)
 		{
-			for (int k = 0 ; k < ((1 << 4) - 1) ; k++)
+			for (int k = 0 ; k < ((1 << (size + 1)) - 1) ; k++)
 			{
-				vTree->setValue(i, j, k, std::make_unique<Voxel>(i & 1 ? 1 : 2));
+				vTree->setValue(i, j, k, Voxel((i & 6) ? 1 : 2));
 			}
 		}
 	}
+
+	vTree->dump(0);
 }

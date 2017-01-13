@@ -6,6 +6,7 @@
 class Voxel
 {
 public:
+	Voxel();
 	Voxel(int);
 	Voxel(const Voxel&);
 
@@ -15,4 +16,7 @@ public:
 
 	int color;
 };
+
+std::ostream& operator<<(std::ostream&, const Voxel&);
+
 #endif

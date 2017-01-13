@@ -1,6 +1,11 @@
 #include <Voxel.hpp>
 
-Voxel::Voxel(int c = 0)
+Voxel::Voxel()
+{
+	color = 0;
+}
+
+Voxel::Voxel(int c)
 {
 	color = c;
 }
@@ -19,3 +24,9 @@ bool Voxel::operator!=(Voxel other)
 {
 	return (!(*this == other));
 }
+
+std::ostream& operator<<(std::ostream& os, const Voxel& v)  
+{  
+    os << v.color;  
+    return os;  
+}  

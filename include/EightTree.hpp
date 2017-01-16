@@ -3,15 +3,21 @@
 
 #include <iostream>
 #include <memory>
+#include <vector>
 
 template<class T>
 class EightTree
 {
 public:
-	EightTree(unsigned int size, T value)
+	EightTree(unsigned int size, T value, std::shared_ptr<std::vector<std::shared_ptr<EightTree>>> path = nullptr)
 	{
 		_size = size;
 		_value = value;
+
+		if (path == nullptr)
+			_path = std::make_shared<std::vector<std::shared_ptr<EightTree>>>(size, nullptr);
+		else
+			_path = path;
 	};
 
 	~EightTree()
@@ -46,6 +52,32 @@ public:
 		return this->getValue();
 	};
 
+
+	void		setValueOpti(int x, int y, int z, T value)
+	{
+		unsigned int i = 0;
+
+		while(i < _size && (*_path)[i] == nullptr)
+			i++;
+
+		while(i < _size)
+		{
+			if ((x >> i) == (_lx >> i) && (y >> i) == (_ly >> i) && (z >> i) == (_lz >> i))
+			{
+				(*_path)[i]->setValue(x, y, z, value);
+				return;
+			}
+
+			i++;
+		}
+
+		this->setValue(x, y, z, value);
+
+		_lx = x;
+		_ly = y;
+		_lz = z;
+	}
+
 	void 		setValue(int x, int y, int z, T value)
 	{
 		int bs = _size - 1;
@@ -58,18 +90,20 @@ public:
 			if (_value != value)
 			{	
 				if (_children[index] == nullptr)
-					_children[index] = std::make_shared<EightTree<T>>(_size - 1, _value);
+					_children[index] = std::make_shared<EightTree<T>>(_size - 1, _value, _path);
 
 				_children[index]->setValue(x, y, z, value);
+				(*_path)[_size - 1] = _children[index];
 
 				if (this->areChildrenSame(value))
 				{
 					_value = value;
+					(*_path)[_size - 1] = nullptr;
 
 					for (int i = 0 ; i < 8 ; i++)
 						if (_children[i] != nullptr)
 							_children[i].reset();
-				}//*/
+				}
 			}
 		}
 	};
@@ -93,6 +127,11 @@ private:
 	unsigned int					_size;
 	std::shared_ptr<EightTree>		_children[8];
 	T								_value;
+
+	int _lx; // I know, very ugly, it's just to test if my algorithm works
+	int _ly;
+	int _lz;
+	std::shared_ptr<std::vector<std::shared_ptr<EightTree>>> _path;
 
 	bool		areChildrenSame(T value)
 	{

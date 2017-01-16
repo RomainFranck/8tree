@@ -6,7 +6,7 @@
 
 int main (int argc, char **argv)
 {
-	int size = argc == 2 ? atoi(argv[1]) : 4;
+	int size = argc == 2 ? atoi(argv[1]) : 6;
 
 	std::shared_ptr<EightTree<Voxel>> vTree = std::make_shared<EightTree<Voxel>>(size, Voxel(0));
 
@@ -16,10 +16,10 @@ int main (int argc, char **argv)
 		{
 			for (int k = 0 ; k < ((1 << (size + 1))) ; k++)
 			{
-				vTree->setValue(i, j, k, Voxel(j & 3 ? 1 : 0));
+				vTree->setValueOpti(i, j, k, Voxel(i + j + k));
 			}
 		}
 	}
 
-	vTree->dump(0);
+	//vTree->dump(0);
 }
